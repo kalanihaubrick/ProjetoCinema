@@ -1,17 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using ProjetoCinema.Data;
 using ProjetoCinema.Models;
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace ProjetoCinema
 {
     public partial class Form1 : Form
     {
-        // String de conexão com o banco de dados
-        private string connectionString = @"Data Source=LAPTOP-VFC28UJV\SQLEXPRESS;Initial Catalog=Cinema;Integrated Security=True";
+        private CinemaDbContext? dbContext;
 
         // Variável para armazenar o cliente_id
         private int cliente_id;
@@ -19,22 +16,42 @@ namespace ProjetoCinema
         public Form1()
         {
             InitializeComponent();
-            private CinemaDbContext _dbContext;
+        }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
 
+            this.dbContext = new CinemaDbContext();
+
+            // Uncomment the line below to start fresh with a new database.
+            // this.dbContext.Database.EnsureDeleted();
+            this.dbContext.Database.EnsureCreated();
+        }
 
         private async void btnEntrar_Click(object sender, EventArgs e)
         {
             string nome = txtNome.Text;
-            using (_dbContext) {
 
-                try
+            try
+            {
+                if (dbContext != null)
                 {
-                    Cliente cliente = await _dbContext.clientes.FindAsync(c => c.nome_cliente == nome);
+                    Cliente? cliente = await dbContext.Clientes.FirstOrDefaultAsync(c => c.cliente_nome == nome);
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
-     }
- }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
 
+            this.dbContext?.Dispose();
+            this.dbContext = null;
+        }
+    }
+}
