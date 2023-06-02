@@ -71,7 +71,6 @@
             Controls.Add(txtNome);
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
         }
