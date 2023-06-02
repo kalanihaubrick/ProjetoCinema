@@ -37,7 +37,16 @@ namespace ProjetoCinema
             {
                 if (dbContext != null)
                 {
-                    Cliente? cliente = await dbContext.Clientes.FirstOrDefaultAsync(c => c.cliente_nome == nome);
+                    Cliente? cliente = await dbContext.cliente.FirstOrDefaultAsync(c => c.nome_cliente == nome);
+                    if (cliente == null)
+                    {
+                        MessageBox.Show("Cliente não encontrado.");
+                        return;
+                    }
+                    cliente_id = cliente.cliente_id;
+                    Form2 form2 = new Form2();
+                    form2.Show();
+                    this.Hide();    
                 }
             }
             catch (Exception ex)
@@ -52,6 +61,11 @@ namespace ProjetoCinema
 
             this.dbContext?.Dispose();
             this.dbContext = null;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

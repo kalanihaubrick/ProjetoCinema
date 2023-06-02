@@ -30,6 +30,7 @@
         {
             txtNome = new TextBox();
             btnEntrar = new Button();
+            label3 = new Label();
             SuspendLayout();
             // 
             // txtNome
@@ -50,11 +51,22 @@
             btnEntrar.UseVisualStyleBackColor = true;
             btnEntrar.Click += btnEntrar_Click;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(313, 170);
+            label3.Name = "label3";
+            label3.Size = new Size(151, 15);
+            label3.TabIndex = 5;
+            label3.Text = "Digite seu Nome Completo";
+            label3.Click += label3_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(label3);
             Controls.Add(btnEntrar);
             Controls.Add(txtNome);
             Name = "Form1";
@@ -67,5 +79,6 @@
 
         private TextBox txtNome;
         private Button btnEntrar;
+        private Label label3;
     }
 }

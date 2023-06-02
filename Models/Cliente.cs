@@ -1,9 +1,12 @@
-﻿namespace ProjetoCinema.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProjetoCinema.Models
 {
     public class Cliente
     {
+        [Key] 
         public int cliente_id { get; set; }
 
-        public string? cliente_nome { get; }
+        public string? nome_cliente { get; set; }
     }
 }
