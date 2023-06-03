@@ -35,24 +35,24 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            comboBox2 = new ComboBox();
+            ComboHora = new ComboBox();
             comboFilme = new ComboBox();
             contextMenuStrip1 = new ContextMenuStrip(components);
             contextMenuStrip2 = new ContextMenuStrip(components);
-            listView1 = new ListView();
+            ListViewAssentos = new ListView();
             Assento = new ColumnHeader();
             Status = new ColumnHeader();
             Selecionar = new ColumnHeader();
             groupBox2 = new GroupBox();
             label6 = new Label();
-            textBox4 = new TextBox();
-            textBox3 = new TextBox();
-            textBox2 = new TextBox();
+            TextConfirmacaoData = new TextBox();
+            TextConfirmacaoAssento = new TextBox();
+            TextConfirmacaoHora = new TextBox();
             label7 = new Label();
             label5 = new Label();
             label4 = new Label();
             BtnComprar = new Button();
-            textBox1 = new TextBox();
+            TextConfirmacaoFilme = new TextBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -64,7 +64,7 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(comboBox2);
+            groupBox1.Controls.Add(ComboHora);
             groupBox1.Controls.Add(comboFilme);
             groupBox1.Location = new Point(12, 30);
             groupBox1.Name = "groupBox1";
@@ -77,6 +77,7 @@
             // ComboData
             // 
             ComboData.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboData.Enabled = false;
             ComboData.FormattingEnabled = true;
             ComboData.Location = new Point(7, 131);
             ComboData.Name = "ComboData";
@@ -86,12 +87,14 @@
             // 
             // BtnListar
             // 
+            BtnListar.Enabled = false;
             BtnListar.Location = new Point(44, 231);
             BtnListar.Name = "BtnListar";
             BtnListar.Size = new Size(113, 47);
             BtnListar.TabIndex = 4;
             BtnListar.Text = "Listar assentos";
             BtnListar.UseVisualStyleBackColor = true;
+            BtnListar.Click += BtnListar_Click;
             // 
             // label3
             // 
@@ -120,14 +123,16 @@
             label1.TabIndex = 2;
             label1.Text = "Filme:";
             // 
-            // comboBox2
+            // ComboHora
             // 
-            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(8, 188);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(187, 23);
-            comboBox2.TabIndex = 1;
+            ComboHora.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboHora.Enabled = false;
+            ComboHora.FormattingEnabled = true;
+            ComboHora.Location = new Point(8, 188);
+            ComboHora.Name = "ComboHora";
+            ComboHora.Size = new Size(187, 23);
+            ComboHora.TabIndex = 1;
+            ComboHora.SelectedIndexChanged += ComboHora_SelectedIndexChanged;
             // 
             // comboFilme
             // 
@@ -149,15 +154,16 @@
             contextMenuStrip2.Name = "contextMenuStrip2";
             contextMenuStrip2.Size = new Size(61, 4);
             // 
-            // listView1
+            // ListViewAssentos
             // 
-            listView1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            listView1.Columns.AddRange(new ColumnHeader[] { Assento, Status, Selecionar });
-            listView1.Location = new Point(219, 30);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(621, 302);
-            listView1.TabIndex = 3;
-            listView1.UseCompatibleStateImageBehavior = false;
+            ListViewAssentos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            ListViewAssentos.CheckBoxes = true;
+            ListViewAssentos.Columns.AddRange(new ColumnHeader[] { Assento, Status, Selecionar });
+            ListViewAssentos.Location = new Point(219, 30);
+            ListViewAssentos.Name = "ListViewAssentos";
+            ListViewAssentos.Size = new Size(621, 302);
+            ListViewAssentos.TabIndex = 3;
+            ListViewAssentos.UseCompatibleStateImageBehavior = false;
             // 
             // Assento
             // 
@@ -168,14 +174,14 @@
             groupBox2.Anchor = AnchorStyles.Bottom;
             groupBox2.AutoSize = true;
             groupBox2.Controls.Add(label6);
-            groupBox2.Controls.Add(textBox4);
-            groupBox2.Controls.Add(textBox3);
-            groupBox2.Controls.Add(textBox2);
+            groupBox2.Controls.Add(TextConfirmacaoData);
+            groupBox2.Controls.Add(TextConfirmacaoAssento);
+            groupBox2.Controls.Add(TextConfirmacaoHora);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(label5);
             groupBox2.Controls.Add(label4);
             groupBox2.Controls.Add(BtnComprar);
-            groupBox2.Controls.Add(textBox1);
+            groupBox2.Controls.Add(TextConfirmacaoFilme);
             groupBox2.Location = new Point(150, 346);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(590, 158);
@@ -192,29 +198,29 @@
             label6.TabIndex = 13;
             label6.Text = "Horário da Sessão:";
             // 
-            // textBox4
+            // TextConfirmacaoData
             // 
-            textBox4.Location = new Point(24, 107);
-            textBox4.Name = "textBox4";
-            textBox4.ReadOnly = true;
-            textBox4.Size = new Size(237, 23);
-            textBox4.TabIndex = 12;
+            TextConfirmacaoData.Location = new Point(24, 107);
+            TextConfirmacaoData.Name = "TextConfirmacaoData";
+            TextConfirmacaoData.ReadOnly = true;
+            TextConfirmacaoData.Size = new Size(237, 23);
+            TextConfirmacaoData.TabIndex = 12;
             // 
-            // textBox3
+            // TextConfirmacaoAssento
             // 
-            textBox3.Location = new Point(299, 107);
-            textBox3.Name = "textBox3";
-            textBox3.ReadOnly = true;
-            textBox3.Size = new Size(165, 23);
-            textBox3.TabIndex = 11;
+            TextConfirmacaoAssento.Location = new Point(299, 107);
+            TextConfirmacaoAssento.Name = "TextConfirmacaoAssento";
+            TextConfirmacaoAssento.ReadOnly = true;
+            TextConfirmacaoAssento.Size = new Size(165, 23);
+            TextConfirmacaoAssento.TabIndex = 11;
             // 
-            // textBox2
+            // TextConfirmacaoHora
             // 
-            textBox2.Location = new Point(299, 49);
-            textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
-            textBox2.Size = new Size(165, 23);
-            textBox2.TabIndex = 10;
+            TextConfirmacaoHora.Location = new Point(299, 49);
+            TextConfirmacaoHora.Name = "TextConfirmacaoHora";
+            TextConfirmacaoHora.ReadOnly = true;
+            TextConfirmacaoHora.Size = new Size(165, 23);
+            TextConfirmacaoHora.TabIndex = 10;
             // 
             // label7
             // 
@@ -252,13 +258,13 @@
             BtnComprar.Text = "Comprar";
             BtnComprar.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // TextConfirmacaoFilme
             // 
-            textBox1.Location = new Point(24, 49);
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(237, 23);
-            textBox1.TabIndex = 0;
+            TextConfirmacaoFilme.Location = new Point(24, 49);
+            TextConfirmacaoFilme.Name = "TextConfirmacaoFilme";
+            TextConfirmacaoFilme.ReadOnly = true;
+            TextConfirmacaoFilme.Size = new Size(237, 23);
+            TextConfirmacaoFilme.TabIndex = 0;
             // 
             // Form2
             // 
@@ -266,7 +272,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(861, 516);
             Controls.Add(groupBox2);
-            Controls.Add(listView1);
+            Controls.Add(ListViewAssentos);
             Controls.Add(groupBox1);
             Name = "Form2";
             Text = "Form2";
@@ -286,24 +292,24 @@
         private Label label3;
         private Label label2;
         private Label label1;
-        private ComboBox comboBox2;
+        private ComboBox ComboHora;
         private ComboBox comboFilme;
         private ContextMenuStrip contextMenuStrip1;
         private ContextMenuStrip contextMenuStrip2;
-        private ListView listView1;
+        private ListView ListViewAssentos;
         private ColumnHeader Assento;
         private ColumnHeader Status;
         private ColumnHeader Selecionar;
         private GroupBox groupBox2;
         private Label label6;
-        private TextBox textBox4;
-        private TextBox textBox3;
-        private TextBox textBox2;
+        private TextBox TextConfirmacaoData;
+        private TextBox TextConfirmacaoAssento;
+        private TextBox TextConfirmacaoHora;
         private Label label7;
         private Label label5;
         private Label label4;
         private Button BtnComprar;
-        private TextBox textBox1;
+        private TextBox TextConfirmacaoFilme;
         private ComboBox ComboData;
     }
 }
