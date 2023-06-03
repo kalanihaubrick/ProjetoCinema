@@ -10,7 +10,6 @@ namespace ProjetoCinema
     {
         private CinemaDbContext? dbContext;
 
-        // Variável para armazenar o cliente_id
         private int cliente_id;
 
         public Form1()
@@ -23,9 +22,6 @@ namespace ProjetoCinema
             base.OnLoad(e);
 
             this.dbContext = new CinemaDbContext();
-
-            // Uncomment the line below to start fresh with a new database.
-            // this.dbContext.Database.EnsureDeleted();
             this.dbContext.Database.EnsureCreated();
         }
 
@@ -44,9 +40,9 @@ namespace ProjetoCinema
                         return;
                     }
                     cliente_id = cliente.cliente_id;
-                    Form2 form2 = new Form2();
+                    Form2 form2 = new Form2(cliente_id);
                     form2.Show();
-                    this.Hide();    
+                    this.Hide();
                 }
             }
             catch (Exception ex)
@@ -64,6 +60,11 @@ namespace ProjetoCinema
         }
 
         private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }
