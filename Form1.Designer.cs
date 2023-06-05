@@ -70,7 +70,8 @@
             Controls.Add(btnEntrar);
             Controls.Add(txtNome);
             Name = "Form1";
-            Text = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Login";
             Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();

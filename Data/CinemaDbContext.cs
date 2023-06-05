@@ -12,7 +12,6 @@ namespace ProjetoCinema.Data
         public DbSet<Filme> filme { get; set; }
         public DbSet<Reserva> reserva { get; set; }
         public DbSet<Sessao> sessao { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>        
             optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["CinemaDb"].ConnectionString);
     }

@@ -39,10 +39,6 @@
             comboFilme = new ComboBox();
             contextMenuStrip1 = new ContextMenuStrip(components);
             contextMenuStrip2 = new ContextMenuStrip(components);
-            ListViewAssentos = new ListView();
-            Assento = new ColumnHeader();
-            Status = new ColumnHeader();
-            Selecionar = new ColumnHeader();
             groupBox2 = new GroupBox();
             label6 = new Label();
             TextConfirmacaoData = new TextBox();
@@ -53,12 +49,18 @@
             label4 = new Label();
             BtnComprar = new Button();
             TextConfirmacaoFilme = new TextBox();
+            DataGridAssentos = new DataGridView();
+            ColunaAssentos = new DataGridViewTextBoxColumn();
+            ColunaStatus = new DataGridViewTextBoxColumn();
+            ColunaSelecao = new DataGridViewButtonColumn();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DataGridAssentos).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.None;
             groupBox1.Controls.Add(ComboData);
             groupBox1.Controls.Add(BtnListar);
             groupBox1.Controls.Add(label3);
@@ -154,24 +156,9 @@
             contextMenuStrip2.Name = "contextMenuStrip2";
             contextMenuStrip2.Size = new Size(61, 4);
             // 
-            // ListViewAssentos
-            // 
-            ListViewAssentos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            ListViewAssentos.CheckBoxes = true;
-            ListViewAssentos.Columns.AddRange(new ColumnHeader[] { Assento, Status, Selecionar });
-            ListViewAssentos.Location = new Point(219, 30);
-            ListViewAssentos.Name = "ListViewAssentos";
-            ListViewAssentos.Size = new Size(621, 302);
-            ListViewAssentos.TabIndex = 3;
-            ListViewAssentos.UseCompatibleStateImageBehavior = false;
-            // 
-            // Assento
-            // 
-            Assento.Tag = "";
-            // 
             // groupBox2
             // 
-            groupBox2.Anchor = AnchorStyles.Bottom;
+            groupBox2.Anchor = AnchorStyles.None;
             groupBox2.AutoSize = true;
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(TextConfirmacaoData);
@@ -251,12 +238,14 @@
             // 
             // BtnComprar
             // 
+            BtnComprar.Enabled = false;
             BtnComprar.Location = new Point(478, 67);
             BtnComprar.Name = "BtnComprar";
             BtnComprar.Size = new Size(84, 47);
             BtnComprar.TabIndex = 5;
             BtnComprar.Text = "Comprar";
             BtnComprar.UseVisualStyleBackColor = true;
+            BtnComprar.Click += BtnComprar_Click;
             // 
             // TextConfirmacaoFilme
             // 
@@ -266,21 +255,53 @@
             TextConfirmacaoFilme.Size = new Size(237, 23);
             TextConfirmacaoFilme.TabIndex = 0;
             // 
+            // DataGridAssentos
+            // 
+            DataGridAssentos.Anchor = AnchorStyles.None;
+            DataGridAssentos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataGridAssentos.Columns.AddRange(new DataGridViewColumn[] { ColunaAssentos, ColunaStatus, ColunaSelecao });
+            DataGridAssentos.Location = new Point(240, 34);
+            DataGridAssentos.Name = "DataGridAssentos";
+            DataGridAssentos.RowTemplate.Height = 25;
+            DataGridAssentos.Size = new Size(609, 298);
+            DataGridAssentos.TabIndex = 5;
+            DataGridAssentos.CellContentClick += DataGridAssentos_CellContentClick;
+            // 
+            // ColunaAssentos
+            // 
+            ColunaAssentos.HeaderText = "Assentos";
+            ColunaAssentos.Name = "ColunaAssentos";
+            ColunaAssentos.ReadOnly = true;
+            // 
+            // ColunaStatus
+            // 
+            ColunaStatus.HeaderText = "Disponibilidade";
+            ColunaStatus.Name = "ColunaStatus";
+            ColunaStatus.ReadOnly = true;
+            // 
+            // ColunaSelecao
+            // 
+            ColunaSelecao.HeaderText = "Selecionar";
+            ColunaSelecao.Name = "ColunaSelecao";
+            ColunaSelecao.Text = "";
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(861, 516);
+            Controls.Add(DataGridAssentos);
             Controls.Add(groupBox2);
-            Controls.Add(ListViewAssentos);
             Controls.Add(groupBox1);
             Name = "Form2";
-            Text = "Form2";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Cinema";
             Load += Form2_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)DataGridAssentos).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -296,10 +317,6 @@
         private ComboBox comboFilme;
         private ContextMenuStrip contextMenuStrip1;
         private ContextMenuStrip contextMenuStrip2;
-        private ListView ListViewAssentos;
-        private ColumnHeader Assento;
-        private ColumnHeader Status;
-        private ColumnHeader Selecionar;
         private GroupBox groupBox2;
         private Label label6;
         private TextBox TextConfirmacaoData;
@@ -311,5 +328,9 @@
         private Button BtnComprar;
         private TextBox TextConfirmacaoFilme;
         private ComboBox ComboData;
+        private DataGridView DataGridAssentos;
+        private DataGridViewTextBoxColumn ColunaAssentos;
+        private DataGridViewTextBoxColumn ColunaStatus;
+        private DataGridViewButtonColumn ColunaSelecao;
     }
 }

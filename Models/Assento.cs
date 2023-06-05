@@ -13,8 +13,5 @@ namespace ProjetoCinema.Models
 
         public int sala_id { get; set; }
 
-        public string? Status { get; set; }
-
-        public string? assento { get; set; }
     }
 }

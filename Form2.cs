@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjetoCinema.Data;
 using ProjetoCinema.Models;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -14,6 +15,10 @@ namespace ProjetoCinema
         private int FilmeId;
         private string? DataSessao;
         private string? HoraSessao;
+        private int SessaoId;
+        private string? Assento;
+        int Numero;
+
         public Form2(int ClienteId)
         {
             InitializeComponent();
@@ -109,47 +114,105 @@ namespace ProjetoCinema
                 Debug.WriteLine(ex);
             }
         }
-        private async Task ListarAssentos(int SessaoId, int SalaId)
+        private async Task<List<AssentoStatus>?> ListarAssentos(int SessaoId, int SalaId)
+        {
+            if (dbContext != null)
+            {
+                try
+                {
+                    List<AssentoStatus> assentos = new List<AssentoStatus>();
+
+                    using (var connection = new SqlConnection(dbContext.Database.GetConnectionString()))
+                    {
+                        using (var command = new SqlCommand("sp_listar_assentos", connection))
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@sessao_id", SessaoId);
+                            command.Parameters.AddWithValue("@sala_id", SalaId);
+
+                            connection.Open();
+
+                            await using (var reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string assento = reader.GetString(0);
+                                    string status = reader.GetString(1);
+
+                                    AssentoStatus assentoStatus = new AssentoStatus { Assento = assento, Status = status };
+                                    assentos.Add(assentoStatus);
+                                }
+                            }
+                        }
+                    }
+
+                    return assentos;
+                }
+
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+            return null;
+        }
+        private void PopulaGridView(List<AssentoStatus> ListaDeAssentos)
+        {
+            DataGridAssentos.Columns.Clear();
+            DataGridAssentos.Columns.Add(ColunaAssentos);
+            DataGridAssentos.Columns.Add(ColunaStatus);
+            DataGridAssentos.Columns.Add(ColunaSelecao);
+
+            foreach (AssentoStatus assentoStatus in ListaDeAssentos)
+            {
+                DataGridViewRow row = new DataGridViewRow();
+
+                DataGridViewTextBoxCell AssentoCell = new DataGridViewTextBoxCell();
+                AssentoCell.Value = assentoStatus.Assento;
+                row.Cells.Add(AssentoCell);
+
+                DataGridViewTextBoxCell StatusCell = new DataGridViewTextBoxCell();
+                StatusCell.Value = assentoStatus.Status;
+                row.Cells.Add(StatusCell);
+
+                DataGridViewButtonCell selecionarCell = new DataGridViewButtonCell();
+                selecionarCell.Value = "Selecionar";
+                row.Cells.Add(selecionarCell);
+
+                DataGridAssentos.Rows.Add(row);
+            }
+        }
+        private async Task ReservarAssento(int ClienteId, int SessaoId, char Fileira, int Numero)
         {
             try
             {
                 if (dbContext != null)
                 {
-                                           
-                    var SessaoIdParam = new SqlParameter("@sessao_id", SessaoId);
-                    var SalaIdParam = new SqlParameter("@sala_id", SalaId);
 
-                    var Assentos = await dbContext.Database
-                         .SqlQueryRaw<Assento>("Exec sp_listar_assentos @sessao_id, @sala_id", SessaoIdParam, SalaIdParam)
-                         .ToListAsync();
-
-                    if (Assentos.Count > 0)
+                    using (var connection = new SqlConnection(dbContext.Database.GetConnectionString()))
                     {
-                        ListViewAssentos.Items.Clear();
-                        foreach (var Assento in Assentos)
+                        using (var command = new SqlCommand("sp_criar_reserva", connection))
                         {
-                            var item = new ListViewItem(Assento.assento);
-                            item.SubItems.Add(Assento.Status);
-                            item.Checked = false;
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@cliente_id", ClienteId);
+                            command.Parameters.AddWithValue("@sessao_id", SessaoId);
+                            command.Parameters.AddWithValue("@fileira", Fileira);
+                            command.Parameters.AddWithValue("@numero_assento", Numero);
 
-                            ListViewAssentos.Items.Add(item);
+                            connection.Open();
 
+                            await command.ExecuteNonQueryAsync();
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-
                 Debug.WriteLine(ex);
             }
         }
 
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
+        private void groupBox1_Enter(object sender, EventArgs e) { }
 
         private async void Form2_Load(object sender, EventArgs e)
         {
@@ -162,9 +225,15 @@ namespace ProjetoCinema
             ComboHora.Items.Clear();
             ComboHora.Enabled = false;
             ComboData.Items.Clear();
-            ComboData.Enabled = false;  
+            ComboData.Enabled = false;
+            DataGridAssentos.Columns.Clear();
+            BtnListar.Enabled = false;
+            TextConfirmacaoAssento.Text = "";
             TextConfirmacaoHora.Text = "";
             TextConfirmacaoData.Text = "";
+            BtnComprar.Enabled = false;
+
+
             try
             {
                 if (comboFilme.SelectedValue != null)
@@ -191,7 +260,11 @@ namespace ProjetoCinema
         {
             ComboHora.Items.Clear();
             ComboHora.Enabled = false;
+            DataGridAssentos.Columns.Clear();
+            BtnListar.Enabled = false;
+            TextConfirmacaoAssento.Text = "";
             TextConfirmacaoHora.Text = "";
+            BtnComprar.Enabled = false;
 
             if (ComboData.SelectedItem != null)
             {
@@ -205,40 +278,107 @@ namespace ProjetoCinema
 
         private void ComboHora_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ComboHora.SelectedItem != null) 
-            { 
-            HoraSessao = ComboHora.SelectedItem.ToString();
-            TextConfirmacaoHora.Text = ComboHora.SelectedItem.ToString();
-            BtnListar.Enabled = true;
+            DataGridAssentos.Columns.Clear();
+            TextConfirmacaoAssento.Text = "";
+            BtnComprar.Enabled = false;
+
+
+            if (ComboHora.SelectedItem != null)
+            {
+                HoraSessao = ComboHora.SelectedItem.ToString();
+                TextConfirmacaoHora.Text = ComboHora.SelectedItem.ToString();
+                BtnListar.Enabled = true;
             }
 
         }
 
         private async void BtnListar_Click(object sender, EventArgs e)
         {
-            DateTime DataHora = DateTime.ParseExact(DataSessao + " " + HoraSessao, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
             try
             {
                 if (dbContext != null)
                 {
+                    DateTime DataHora = DateTime.ParseExact(DataSessao + " " + HoraSessao, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
                     var sessao = await dbContext.sessao
                         .FirstOrDefaultAsync(s => s.filme_id == FilmeId && s.horario == DataHora);
 
                     if (sessao != null)
                     {
-                        int SessaoId = sessao.sessao_id;
+                        SessaoId = sessao.sessao_id;
                         int SalaId = sessao.sala_id;
-                        await ListarAssentos(SessaoId, SalaId);
-                    }
+                        List<AssentoStatus>? ListaDeAssentos = await ListarAssentos(SessaoId, SalaId);
 
+
+                        if (ListaDeAssentos != null)
+                        {
+                            PopulaGridView(ListaDeAssentos);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-
                 Debug.WriteLine(ex);
             }
         }
 
+        private void DataGridAssentos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex == ColunaSelecao.Index)
+            {
+                DataGridViewRow DataGrid = DataGridAssentos.Rows[e.RowIndex];
+
+                Assento = DataGrid.Cells[ColunaAssentos.Index].Value.ToString();
+                string? status = DataGrid.Cells[ColunaStatus.Index].Value.ToString();
+
+                if (status != "Ocupado")
+                {
+                    TextConfirmacaoAssento.Text = Assento;
+                    BtnComprar.Enabled = true;
+                }
+                if (status == "Ocupado")
+                {
+                    MessageBox.Show("Assento ocupado, por favor selecione outra opção");
+                }
+
+
+            }
+        }
+
+        private async void BtnComprar_Click(object sender, EventArgs e)
+        {
+            if (dbContext != null)
+            {
+                char Fileira = Assento[0];
+                string StringNumero = Assento.Substring(1);
+
+                if (int.TryParse(StringNumero, out int value))
+                {
+                    Numero = value;
+                }
+                try
+                {
+                    await ReservarAssento(client_id, SessaoId, Fileira, Numero);
+                    MessageBox.Show($"Compra efetuada com sucesso! Assento:{Assento}");
+
+                    DataGridAssentos.Columns.Clear();
+                    BtnComprar.Enabled = false;
+                    TextConfirmacaoAssento.Text = "";
+                    TextConfirmacaoData.Text = "";
+                    TextConfirmacaoFilme.Text = "";
+                    TextConfirmacaoHora.Text = "";
+                    comboFilme.SelectedIndex = -1;
+                    ComboData.SelectedIndex = -1;
+                    ComboHora.SelectedIndex = -1;
+                }
+                catch (Exception ex)
+                {
+
+                    Debug.WriteLine(ex);
+                }
+            }
+
+        }
     }
 }
