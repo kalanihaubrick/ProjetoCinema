@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjetoCinema.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
 
 namespace ProjetoCinema.Data

@@ -49,7 +49,7 @@ namespace ProjetoCinema
             catch (Exception ex)
             {
 
-                Debug.WriteLine(ex);
+                MessageBox.Show(ex.Message);
             }
         }
         private async Task CarregarDatasSessoes(int FilmeId)
@@ -78,18 +78,21 @@ namespace ProjetoCinema
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                MessageBox.Show(ex.Message);
             }
         }
-        private async Task CarregarHorariosSessao(int FilmeId)
+        private async Task CarregarHorariosSessao(int FilmeId, DateTime dataSessao)
         {
             try
             {
                 if (dbContext != null)
                 {
+
                     List<DateTime> DataEHora = await dbContext.sessao
                         .Where(s => s.filme_id == FilmeId)
+                        .Where(s => s.horario.Date == dataSessao)
                         .Select(s => s.horario)
+                        .OrderBy(s => s.TimeOfDay)
                         .ToListAsync();
 
                     List<string> HorariosSessao = DataEHora
@@ -111,10 +114,10 @@ namespace ProjetoCinema
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                MessageBox.Show(ex.Message);
             }
         }
-        private async Task<List<AssentoStatus>?> ListarAssentos(int SessaoId, int SalaId)
+        private async Task<List<AssentoStatus>?> ListarAssentos(int sessaoId, int salaId)
         {
             if (dbContext != null)
             {
@@ -127,8 +130,8 @@ namespace ProjetoCinema
                         using (var command = new SqlCommand("sp_listar_assentos", connection))
                         {
                             command.CommandType = CommandType.StoredProcedure;
-                            command.Parameters.AddWithValue("@sessao_id", SessaoId);
-                            command.Parameters.AddWithValue("@sala_id", SalaId);
+                            command.Parameters.AddWithValue("@sessao_id", sessaoId);
+                            command.Parameters.AddWithValue("@sala_id", salaId);
 
                             connection.Open();
 
@@ -151,7 +154,7 @@ namespace ProjetoCinema
 
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex);
+                    MessageBox.Show(ex.Message);
                 }
             }
             return null;
@@ -208,7 +211,7 @@ namespace ProjetoCinema
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -251,7 +254,7 @@ namespace ProjetoCinema
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                MessageBox.Show(ex.Message);
             }
 
         }
@@ -269,7 +272,8 @@ namespace ProjetoCinema
             if (ComboData.SelectedItem != null)
             {
                 DataSessao = ComboData.SelectedItem.ToString();
-                await CarregarHorariosSessao(FilmeId);
+                DateTime dateTime = DateTime.ParseExact(DataSessao + " " +"00:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+                await CarregarHorariosSessao(FilmeId,dateTime);
                 ComboHora.Enabled = true;
                 TextConfirmacaoData.Text = ComboData.SelectedItem.ToString();
             }
@@ -319,7 +323,7 @@ namespace ProjetoCinema
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -359,8 +363,19 @@ namespace ProjetoCinema
                 }
                 try
                 {
+                    var cliente = await dbContext.cliente.FirstOrDefaultAsync(c => c.cliente_id == client_id);
+                    var sessao = await dbContext.sessao.FirstOrDefaultAsync(s => s.sessao_id == SessaoId);
+                    var sala = await dbContext.sala.FirstOrDefaultAsync(s => s.sala_id == sessao.sala_id); 
+                    var filme = await dbContext.filme.FirstOrDefaultAsync(f => f.filme_id == sessao.filme_id);
+
                     await ReservarAssento(client_id, SessaoId, Fileira, Numero);
-                    MessageBox.Show($"Compra efetuada com sucesso! Assento:{Assento}");
+                    
+                    MessageBox.Show($"Compra efetuada com sucesso!\n\n" +
+                $"Filme: {filme.nome_filme}\n" +
+                $"Sala: {sala.numero_sala}\n" +
+                $"Data e Hora: {sessao.horario}\n" +
+                $"Assento: {Assento}\n" +
+                $"Nome: {cliente.nome_cliente}");
 
                     DataGridAssentos.Columns.Clear();
                     BtnComprar.Enabled = false;
@@ -375,7 +390,7 @@ namespace ProjetoCinema
                 catch (Exception ex)
                 {
 
-                    Debug.WriteLine(ex);
+                    MessageBox.Show(ex.Message);
                 }
             }
 
