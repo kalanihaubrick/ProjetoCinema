@@ -60,6 +60,7 @@ namespace ProjetoCinema
                 {
                     List<DateTime> DataSessao = await dbContext.sessao
                         .Where(s => s.filme_id == FilmeId)
+                        .Where(s => s.horario >= DateTime.Now)
                         .Select(s => s.horario.Date)
                         .Distinct()
                         .ToListAsync();
@@ -87,28 +88,58 @@ namespace ProjetoCinema
             {
                 if (dbContext != null)
                 {
-
-                    List<DateTime> DataEHora = await dbContext.sessao
-                        .Where(s => s.filme_id == FilmeId)
-                        .Where(s => s.horario.Date == dataSessao)
-                        .Select(s => s.horario)
-                        .OrderBy(s => s.TimeOfDay)
-                        .ToListAsync();
-
-                    List<string> HorariosSessao = DataEHora
-                        .Select(h => h.ToString("HH:mm"))
-                        .ToList();
-
-                    if (HorariosSessao.Count > 0)
+                    if (dataSessao == DateTime.Now.Date)
                     {
-                        ComboHora.Items.Clear();
-                        ComboHora.Items.AddRange(HorariosSessao.ToArray());
-                        ComboHora.SelectedIndex = -1;
-                    }
-                    else
+
+                        List<DateTime> DataEHora = await dbContext.sessao
+                            .Where(s => s.filme_id == FilmeId)
+                            .Where(s => s.horario.Date == dataSessao)
+                            .Where(s => s.horario.TimeOfDay >= DateTime.Now.TimeOfDay)
+                            .Select(s => s.horario)
+                            .OrderBy(s => s.TimeOfDay)
+                            .ToListAsync();
+
+                        List<string> HorariosSessao = DataEHora
+                            .Select(h => h.ToString("HH:mm"))
+                            .ToList();
+
+
+                        if (HorariosSessao.Count > 0)
+                        {
+                            ComboHora.Items.Clear();
+                            ComboHora.Items.AddRange(HorariosSessao.ToArray());
+                            ComboHora.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            ComboHora.Items.Clear();
+                            ComboHora.SelectedIndex = -1;
+                        }
+                    } else if (dataSessao > DateTime.Now.Date)
                     {
-                        ComboHora.Items.Clear();
-                        ComboHora.SelectedIndex = -1;
+                        List<DateTime> DataEHora = await dbContext.sessao
+                            .Where(s => s.filme_id == FilmeId)
+                            .Where(s => s.horario.Date == dataSessao)
+                            .Select(s => s.horario)
+                            .OrderBy(s => s.TimeOfDay)
+                            .ToListAsync();
+
+                        List<string> HorariosSessao = DataEHora
+                            .Select(h => h.ToString("HH:mm"))
+                            .ToList();
+
+
+                        if (HorariosSessao.Count > 0)
+                        {
+                            ComboHora.Items.Clear();
+                            ComboHora.Items.AddRange(HorariosSessao.ToArray());
+                            ComboHora.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            ComboHora.Items.Clear();
+                            ComboHora.SelectedIndex = -1;
+                        }
                     }
                 }
             }
