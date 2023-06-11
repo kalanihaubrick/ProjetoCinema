@@ -272,8 +272,8 @@ namespace ProjetoCinema
             if (ComboData.SelectedItem != null)
             {
                 DataSessao = ComboData.SelectedItem.ToString();
-                DateTime dateTime = DateTime.ParseExact(DataSessao + " " +"00:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-                await CarregarHorariosSessao(FilmeId,dateTime);
+                DateTime dateTime = DateTime.ParseExact(DataSessao + " " + "00:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+                await CarregarHorariosSessao(FilmeId, dateTime);
                 ComboHora.Enabled = true;
                 TextConfirmacaoData.Text = ComboData.SelectedItem.ToString();
             }
@@ -365,11 +365,11 @@ namespace ProjetoCinema
                 {
                     var cliente = await dbContext.cliente.FirstOrDefaultAsync(c => c.cliente_id == client_id);
                     var sessao = await dbContext.sessao.FirstOrDefaultAsync(s => s.sessao_id == SessaoId);
-                    var sala = await dbContext.sala.FirstOrDefaultAsync(s => s.sala_id == sessao.sala_id); 
+                    var sala = await dbContext.sala.FirstOrDefaultAsync(s => s.sala_id == sessao.sala_id);
                     var filme = await dbContext.filme.FirstOrDefaultAsync(f => f.filme_id == sessao.filme_id);
 
                     await ReservarAssento(client_id, SessaoId, Fileira, Numero);
-                    
+
                     MessageBox.Show($"Compra efetuada com sucesso!\n\n" +
                 $"Filme: {filme.nome_filme}\n" +
                 $"Sala: {sala.numero_sala}\n" +

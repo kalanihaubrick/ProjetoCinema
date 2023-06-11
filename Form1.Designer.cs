@@ -31,6 +31,7 @@
             txtNome = new TextBox();
             btnEntrar = new Button();
             label3 = new Label();
+            btnNovoCliente = new Button();
             SuspendLayout();
             // 
             // txtNome
@@ -61,11 +62,22 @@
             label3.Text = "Digite seu Nome Completo";
             label3.Click += label3_Click;
             // 
+            // btnNovoCliente
+            // 
+            btnNovoCliente.Location = new Point(313, 399);
+            btnNovoCliente.Name = "btnNovoCliente";
+            btnNovoCliente.Size = new Size(131, 23);
+            btnNovoCliente.TabIndex = 6;
+            btnNovoCliente.Text = "Novo cliente?";
+            btnNovoCliente.UseVisualStyleBackColor = true;
+            btnNovoCliente.Click += btnNovoCliente_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnNovoCliente);
             Controls.Add(label3);
             Controls.Add(btnEntrar);
             Controls.Add(txtNome);
@@ -82,5 +94,6 @@
         private TextBox txtNome;
         private Button btnEntrar;
         private Label label3;
+        private Button btnNovoCliente;
     }
 }

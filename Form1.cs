@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjetoCinema.Data;
 using ProjetoCinema.Models;
+using ProjetoCinema.Service;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -9,12 +10,14 @@ namespace ProjetoCinema
     public partial class Form1 : Form
     {
         private CinemaDbContext? dbContext;
+        private ClienteService? clienteService;
 
         private int cliente_id;
 
         public Form1()
         {
             InitializeComponent();
+
         }
 
         protected override void OnLoad(EventArgs e)
@@ -23,6 +26,7 @@ namespace ProjetoCinema
 
             this.dbContext = new CinemaDbContext();
             this.dbContext.Database.EnsureCreated();
+            clienteService = new ClienteService(dbContext);
         }
 
         private async void btnEntrar_Click(object sender, EventArgs e)
@@ -31,18 +35,17 @@ namespace ProjetoCinema
 
             try
             {
-                if (dbContext != null)
+                if (clienteService != null)
                 {
-                    Cliente? cliente = await dbContext.cliente.FirstOrDefaultAsync(c => c.nome_cliente == nome);
-                    if (cliente == null)
+                    int? clienteId = await clienteService.PegarClienteId(nome);
+
+                    if (clienteId.HasValue)
                     {
-                        MessageBox.Show("Cliente não encontrado.");
-                        return;
+                        cliente_id = clienteId.Value;
+                        Form2 form2 = new Form2(cliente_id);
+                        form2.Show();
+                        this.Hide();
                     }
-                    cliente_id = cliente.cliente_id;
-                    Form2 form2 = new Form2(cliente_id);
-                    form2.Show();
-                    this.Hide();
                 }
             }
             catch (Exception ex)
@@ -67,6 +70,13 @@ namespace ProjetoCinema
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnNovoCliente_Click(object sender, EventArgs e)
+        {
+            FormCadastro formCadastro = new FormCadastro();
+            formCadastro.Show();
+            this.Hide();
         }
     }
 }
